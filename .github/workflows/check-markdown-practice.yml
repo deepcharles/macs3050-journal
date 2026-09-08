@@ -1,0 +1,206 @@
+name: Check markdown practice
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    if: contains(github.event.issue.labels.*.name, 'markdown-practice')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Grade exercises and label issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || "";
+
+            // Split the body into the 8 template sections using their
+            // exact (known) headers, then split each section into its
+            // instructions paragraph and the student's answer.
+            const markers = [
+              "## 1. Headers",
+              "## 2. Emphasis",
+              "## 3. Lists",
+              "## 4. Links",
+              "## 5. Images",
+              "## 6. Code",
+              "## 7. Blockquote",
+              "## 8. Table",
+            ];
+
+            function extractSection(start, end) {
+              const startIdx = body.indexOf(start);
+              if (startIdx === -1) return "";
+              const from = startIdx + start.length;
+              const to = end ? body.indexOf(end, from) : body.length;
+              return body.slice(from, to === -1 ? body.length : to).trim();
+            }
+
+            function splitAnswer(raw) {
+              const parts = raw.split(/\n\s*\n/);
+              const answer = parts.slice(1).join("\n\n").trim();
+              return answer;
+            }
+
+            function isAnswered(answer) {
+              return answer.length > 0 && !/your answer here/i.test(answer);
+            }
+
+            const checks = [
+              {
+                name: "1. Headers",
+                test: (a) => {
+                  const headers = [...a.matchAll(/^(#{1,6})\s+\S.*$/gm)];
+                  const levels = new Set(headers.map((m) => m[1].length));
+                  return headers.length >= 3 && levels.size >= 2;
+                },
+              },
+              {
+                name: "2. Emphasis",
+                test: (a) => {
+                  const boldRe = /\*\*[^*\n]+\*\*/;
+                  const italicRe = /(?<!\*)\*(?!\*)[^*\n]+\*(?!\*)/;
+                  const hasBold = boldRe.test(a);
+                  const hasItalic = italicRe.test(a);
+                  const hasBoth = a
+                    .split("\n")
+                    .some((line) => boldRe.test(line) && italicRe.test(line.replace(boldRe, "")));
+                  return hasBold && hasItalic && hasBoth;
+                },
+              },
+              {
+                name: "3. Lists",
+                test: (a) => {
+                  const unordered = [...a.matchAll(/^\s*[-*+]\s+\S.*$/gm)];
+                  const ordered = [...a.matchAll(/^\s*\d+[.)]\s+\S.*$/gm)];
+                  const nested = [...a.matchAll(/^[ \t]+[-*+]\s+\S|^[ \t]+\d+[.)]\s+\S/gm)];
+                  return unordered.length >= 3 && ordered.length >= 3 && nested.length >= 1;
+                },
+              },
+              {
+                name: "4. Links",
+                test: (a) => {
+                  const inlineLink = /\[[^\]]+\]\([^)]+\)/.test(a);
+                  const refUse = /\[[^\]]+\]\[[^\]]+\]/.test(a);
+                  const refDef = /^\s*\[[^\]]+\]:\s*\S+/m.test(a);
+                  return inlineLink && refUse && refDef;
+                },
+              },
+              {
+                name: "5. Images",
+                test: (a) => /!\[[^\]\s][^\]]*\]\([^)]+\)/.test(a),
+              },
+              {
+                name: "6. Code",
+                test: (a) => {
+                  const inlineCode = /`[^`\n]+`/.test(a);
+                  const fenced = /```[ \t]*\S+[\s\S]*?```/.test(a);
+                  return inlineCode && fenced;
+                },
+              },
+              {
+                name: "7. Blockquote",
+                test: (a) => /^\s*>\s?\S/m.test(a),
+              },
+              {
+                name: "8. Table",
+                test: (a) => {
+                  const lines = a
+                    .split("\n")
+                    .map((l) => l.trim())
+                    .filter(Boolean)
+                    .filter((l) => l.includes("|"));
+                  const sepIdx = lines.findIndex((l) =>
+                    /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?$/.test(l)
+                  );
+                  return sepIdx >= 1 && lines.length - sepIdx - 1 >= 3;
+                },
+              },
+            ];
+
+            const results = checks.map((check, i) => {
+              const raw = extractSection(markers[i], markers[i + 1]);
+              const answer = splitAnswer(raw);
+              const answered = isAnswered(answer);
+              const passed = answered && check.test(answer);
+              return { name: check.name, passed };
+            });
+
+            const failed = results.filter((r) => !r.passed);
+            const allPassed = failed.length === 0;
+
+            const doneLabel = "done";
+            const unfinishedLabel = "unfinished";
+            const targetLabel = allPassed ? doneLabel : unfinishedLabel;
+            const otherLabel = allPassed ? unfinishedLabel : doneLabel;
+
+            async function ensureLabel(name, color, description) {
+              try {
+                await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name });
+              } catch (e) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description,
+                });
+              }
+            }
+
+            await ensureLabel(doneLabel, "0E8A16", "All exercises are complete");
+            await ensureLabel(unfinishedLabel, "D93F0B", "Some exercises still need work");
+
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: otherLabel,
+              });
+            } catch (e) {
+              // label wasn't set, nothing to remove
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [targetLabel],
+            });
+
+            const marker = "<!-- markdown-practice-check -->";
+            const body_ = allPassed
+              ? `${marker}\nAll exercises look complete. Marked as \`${doneLabel}\`.`
+              : `${marker}\nThe following exercises still need work:\n\n${failed
+                  .map((f) => `- [ ] ${f.name}`)
+                  .join("\n")}\n\nMarked as \`${unfinishedLabel}\`.`;
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.data.find(
+              (c) => c.user.type === "Bot" && c.body && c.body.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: body_,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body_,
+              });
+            }
