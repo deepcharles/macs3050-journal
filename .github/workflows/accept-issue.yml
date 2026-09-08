@@ -1,0 +1,51 @@
+name: Accept issue
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  accept:
+    if: github.event.label.name == 'accepted'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write issue to summaries
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          mkdir -p summaries
+          slug=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+          filename="summaries/${ISSUE_NUMBER}-${slug}.md"
+          {
+            echo "# ${ISSUE_TITLE}"
+            echo
+            echo "$ISSUE_BODY"
+          } > "$filename"
+          echo "FILENAME=$filename" >> "$GITHUB_ENV"
+
+      - name: Commit summary
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FILENAME"
+          git commit -m "Add summary for issue #${{ github.event.issue.number }}"
+          git push
+
+      - name: Close issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: "closed",
+            });
