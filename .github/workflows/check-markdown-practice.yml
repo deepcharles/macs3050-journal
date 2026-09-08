@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   check:
-    if: contains(github.event.issue.labels.*.name, 'markdown-practice')
+    if: startsWith(github.event.issue.title, '[Markdown Practice]')
     runs-on: ubuntu-latest
     steps:
       - name: Grade exercises and label issue
@@ -92,7 +92,7 @@ jobs:
               },
               {
                 name: "5. Images",
-                test: (a) => /!\[[^\]\s][^\]]*\]\([^)]+\)/.test(a),
+                test: (a) => /!\[[^\]]*\]\([^)]+\)/.test(a),
               },
               {
                 name: "6. Code",

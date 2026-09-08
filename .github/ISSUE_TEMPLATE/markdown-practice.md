@@ -35,7 +35,7 @@ Add an inline link to a website of your choice, and a reference-style link (`[te
 
 ## 5. Images
 
-Embed an image using Markdown syntax, with a short alt text describing it.
+Embed an image using Markdown syntax.
 
 *(your answer here)*
 
