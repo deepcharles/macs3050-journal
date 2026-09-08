@@ -31,7 +31,7 @@ For each exercise, write your answer below the instructions, then preview the re
 
 ## 4. Links
 
-<!-- Add an inline link to a website of your choice, and a reference-style link, with the link definition placed at the bottom. -->
+<!-- Add an inline link to a website of your choice. -->
 
 (your answer here)
 

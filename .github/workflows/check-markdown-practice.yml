@@ -83,12 +83,7 @@ jobs:
               },
               {
                 name: "4. Links",
-                test: (a) => {
-                  const inlineLink = /\[[^\]]+\]\([^)]+\)/.test(a);
-                  const refUse = /\[[^\]]+\]\[[^\]]+\]/.test(a);
-                  const refDef = /^\s*\[[^\]]+\]:\s*\S+/m.test(a);
-                  return inlineLink && refUse && refDef;
-                },
+                test: (a) => /\[[^\]]+\]\([^)]+\)/.test(a),
               },
               {
                 name: "5. Images",
