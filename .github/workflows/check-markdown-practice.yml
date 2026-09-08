@@ -18,7 +18,7 @@ jobs:
           script: |
             const body = context.payload.issue.body || "";
 
-            // Split the body into the 8 template sections using their
+            // Split the body into the 7 template sections using their
             // exact (known) headers, then split each section into its
             // instructions paragraph and the student's answer.
             const markers = [
@@ -26,10 +26,9 @@ jobs:
               "## 2. Emphasis",
               "## 3. Lists",
               "## 4. Links",
-              "## 5. Images",
-              "## 6. Code",
-              "## 7. Blockquote",
-              "## 8. Table",
+              "## 5. Code",
+              "## 6. Blockquote",
+              "## 7. Table",
             ];
 
             function extractSection(start, end) {
@@ -86,11 +85,7 @@ jobs:
                 test: (a) => /\[[^\]]+\]\([^)]+\)/.test(a),
               },
               {
-                name: "5. Images",
-                test: (a) => /!\[[^\]]*\]\([^)]+\)/.test(a),
-              },
-              {
-                name: "6. Code",
+                name: "5. Code",
                 test: (a) => {
                   const inlineCode = /`[^`\n]+`/.test(a);
                   const fenced = /```[ \t]*\S+[\s\S]*?```/.test(a);
@@ -98,11 +93,11 @@ jobs:
                 },
               },
               {
-                name: "7. Blockquote",
+                name: "6. Blockquote",
                 test: (a) => /^\s*>\s?\S/m.test(a),
               },
               {
-                name: "8. Table",
+                name: "7. Table",
                 test: (a) => {
                   const lines = a
                     .split("\n")

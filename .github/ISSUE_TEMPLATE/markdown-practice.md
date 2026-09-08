@@ -35,25 +35,19 @@ For each exercise, write your answer below the instructions, then preview the re
 
 (your answer here)
 
-## 5. Images
-
-<!-- Embed an image. -->
-
-(your answer here)
-
-## 6. Code
+## 5. Code
 
 <!-- Write one sentence that includes some inline code, then add a fenced code block (with a language tag) containing a short snippet. -->
 
 (your answer here)
 
-## 7. Blockquote
+## 6. Blockquote
 
 <!-- Quote a sentence from an article or book as a blockquote. -->
 
 (your answer here)
 
-## 8. Table
+## 7. Table
 
 <!-- Make a table with 2 columns and 3 rows. -->
 
