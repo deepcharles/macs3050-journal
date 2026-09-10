@@ -1,0 +1,81 @@
+name: Abstract Summary
+description: Reference and abstract analysis exercises for an assigned article.
+title: "[Abstract Summary]: "
+labels: ["abstract-summary"]
+body:
+  - type: input
+    id: students
+    attributes:
+      label: Students
+      description: Names of the students, separated by commas.
+      placeholder: "e.g. Jane Doe, John Smith"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference
+      description: >
+        Give the reference to your article. You need to create and paste a
+        BibTeX entry in `biblio.bib` using [zbib.org](https://zbib.org/).
+      placeholder: Paste your BibTeX entry here.
+      render: bibtex
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "## Abstract"
+
+  - type: textarea
+    id: abstract-part1
+    attributes:
+      label: "What, why, objective?"
+      description: >
+        Copy-paste sentences of the abstract that answer the questions:
+        what is the research about, why is it important, objective of this
+        paper?
+    validations:
+      required: true
+
+  - type: textarea
+    id: abstract-part2
+    attributes:
+      label: "How is the problem solved?"
+      description: >
+        Copy-paste sentences of the abstract that answer the questions:
+        how is the problem solved (data, method, techniques)?
+    validations:
+      required: true
+
+  - type: textarea
+    id: abstract-part3
+    attributes:
+      label: "Result"
+      description: >
+        Copy-paste sentences of the abstract that describe the result.
+        Is there a quantitative measure of the result?
+    validations:
+      required: true
+
+  - type: textarea
+    id: abstract-part4
+    attributes:
+      label: "Impact"
+      description: >
+        Copy-paste sentences of the abstract that answer the questions:
+        what is the impact, how useful is it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: title-word-percentage
+    attributes:
+      label: "Title / abstract word overlap"
+      description: >
+        What percentage of title words are in the abstract? In the first
+        part of the abstract (see the "What, why, objective?" question
+        above)? Do not count stopwords, e.g., "the," "is," "and".
+    validations:
+      required: true
