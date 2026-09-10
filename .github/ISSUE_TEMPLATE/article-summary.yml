@@ -1,5 +1,5 @@
 name: Article Summary
-description: Reference and abstract analysis exercises for an assigned article.
+description: Reference and reading questions for an assigned article.
 title: "[Article Summary]: "
 labels: ["article-summary"]
 body:
@@ -15,67 +15,62 @@ body:
   - type: textarea
     id: reference
     attributes:
-      label: Reference
+      label: "Question 1: Reference"
       description: >
-        Give the reference to your article. You need to create and paste a
-        BibTeX entry in `biblio.bib` using [zbib.org](https://zbib.org/).
+        Give a correctly formatted citation. Paste a BibTeX entry created
+        with [zbib.org](https://zbib.org/).
       placeholder: Paste your BibTeX entry here.
       render: bibtex
     validations:
       required: true
 
-  - type: markdown
-    attributes:
-      value: "## Abstract"
-
   - type: textarea
-    id: abstract-part1
+    id: research-question
     attributes:
-      label: "What, why, objective?"
-      description: >
-        Copy-paste sentences of the abstract that answer the questions:
-        what is the research about, why is it important, objective of this
-        paper?
+      label: "Question 2: Research question"
+      description: What's the research question(s)? Why does it matter?
     validations:
       required: true
 
   - type: textarea
-    id: abstract-part2
+    id: data
     attributes:
-      label: "How is the problem solved?"
+      label: "Question 3: Data"
       description: >
-        Copy-paste sentences of the abstract that answer the questions:
-        how is the problem solved (data, method, techniques)?
+        Describe the data, using the systematic approach seen in class:
+        **who** (the cases), **what** (the variables), and **when**,
+        **where**, and **how** it was collected.
     validations:
       required: true
 
   - type: textarea
-    id: abstract-part3
+    id: results
     attributes:
-      label: "Result"
+      label: "Question 4: Results"
       description: >
-        Copy-paste sentences of the abstract that describe the result.
-        Is there a quantitative measure of the result?
+        List the most important results and conclusions. Does the data
+        support the findings?
     validations:
       required: true
 
   - type: textarea
-    id: abstract-part4
+    id: cited-articles
     attributes:
-      label: "Impact"
+      label: "Question 5: Cited articles"
       description: >
-        Copy-paste sentences of the abstract that answer the questions:
-        what is the impact, how useful is it?
+        What are the three cited articles that you should read to better
+        understand? Give a BibTeX entry for each (using
+        [zbib.org](https://zbib.org/)). How many citations does each have
+        (use [Google Scholar](https://scholar.google.com/))?
     validations:
       required: true
 
   - type: textarea
-    id: title-word-percentage
+    id: questions-for-authors
     attributes:
-      label: "Title / abstract word overlap"
+      label: "Question 6: Questions for the authors"
       description: >
-        What percentage of title words are in the abstract? In the first
-        part of the abstract (see the "What, why, objective?" question
-        above)? Do not count stopwords, e.g., "the," "is," "and".
+        What are three questions you wish you could ask the authors to
+        help you better understand the article?
     validations:
       required: true
