@@ -61,8 +61,10 @@ jobs:
               {
                 name: "2. Emphasis",
                 test: (a) => {
-                  const boldRe = /\*\*[^*\n]+\*\*/;
-                  const italicRe = /(?<!\*)\*(?!\*)[^*\n]+\*(?!\*)/;
+                  // GFM renders both * and _ delimiters as emphasis.
+                  const boldRe = /(\*\*[^*\n]+\*\*)|(__[^_\n]+__)/;
+                  const italicRe =
+                    /((?<!\*)\*(?!\*)[^*\n]+\*(?!\*))|((?<![\w_])_(?!_)[^_\n]+_(?![\w_]))/;
                   const hasBold = boldRe.test(a);
                   const hasItalic = italicRe.test(a);
                   const hasBoth = a
