@@ -1,0 +1,171 @@
+name: Check LaTeX math practice
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    if: startsWith(github.event.issue.title, '[LaTeX Math Practice]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Grade exercises and label issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || "";
+
+            // Split the body into the 7 template sections using their
+            // exact (known) headers, then split each section into its
+            // instructions paragraph and the student's answer.
+            const markers = [
+              "## 1. Inline math",
+              "## 2. Display math",
+              "## 3. Fractions",
+              "## 4. Exponents and subscripts",
+              "## 5. Greek letters",
+              "## 6. Summation or integral",
+              "## 7. Square roots",
+            ];
+
+            function extractSection(start, end) {
+              const startIdx = body.indexOf(start);
+              if (startIdx === -1) return "";
+              const from = startIdx + start.length;
+              const to = end ? body.indexOf(end, from) : body.length;
+              return body.slice(from, to === -1 ? body.length : to).trim();
+            }
+
+            function splitAnswer(raw) {
+              const parts = raw.split(/\n\s*\n/);
+              const answer = parts.slice(1).join("\n\n").trim();
+              return answer;
+            }
+
+            function isAnswered(answer) {
+              return answer.length > 0 && !/your answer here/i.test(answer);
+            }
+
+            const checks = [
+              {
+                name: "1. Inline math",
+                test: (a) => /(?<!\$)\$(?!\$)[^$\n]+\$(?!\$)/.test(a),
+              },
+              {
+                name: "2. Display math",
+                test: (a) => /(\$\$[\s\S]+?\$\$)|(```math[\s\S]+?```)/.test(a),
+              },
+              {
+                name: "3. Fractions",
+                test: (a) => /\\frac\{[^{}]+\}\{[^{}]+\}/.test(a),
+              },
+              {
+                name: "4. Exponents and subscripts",
+                test: (a) => {
+                  const hasExp = /\^(\{[^{}]+\}|[A-Za-z0-9])/.test(a);
+                  const hasSub = /_(\{[^{}]+\}|[A-Za-z0-9])/.test(a);
+                  return hasExp && hasSub;
+                },
+              },
+              {
+                name: "5. Greek letters",
+                test: (a) =>
+                  /\\(alpha|beta|gamma|delta|epsilon|zeta|eta|theta|iota|kappa|lambda|mu|nu|xi|omicron|pi|rho|sigma|tau|upsilon|phi|chi|psi|omega)\b/i.test(
+                    a
+                  ),
+              },
+              {
+                name: "6. Summation or integral",
+                test: (a) => /\\(sum|int|prod)_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)/.test(a),
+              },
+              {
+                name: "7. Square roots",
+                test: (a) => /\\sqrt(\{[^{}]+\}|\S)/.test(a),
+              },
+            ];
+
+            const results = checks.map((check, i) => {
+              const raw = extractSection(markers[i], markers[i + 1]);
+              const answer = splitAnswer(raw);
+              const answered = isAnswered(answer);
+              const passed = answered && check.test(answer);
+              return { name: check.name, passed };
+            });
+
+            const failed = results.filter((r) => !r.passed);
+            const allPassed = failed.length === 0;
+
+            const doneLabel = "done";
+            const unfinishedLabel = "unfinished";
+            const targetLabel = allPassed ? doneLabel : unfinishedLabel;
+            const otherLabel = allPassed ? unfinishedLabel : doneLabel;
+
+            async function ensureLabel(name, color, description) {
+              try {
+                await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name });
+              } catch (e) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description,
+                });
+              }
+            }
+
+            await ensureLabel(doneLabel, "0E8A16", "All exercises are complete");
+            await ensureLabel(unfinishedLabel, "D93F0B", "Some exercises still need work");
+
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: otherLabel,
+              });
+            } catch (e) {
+              // label wasn't set, nothing to remove
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [targetLabel],
+            });
+
+            const marker = "<!-- latex-math-practice-check -->";
+            const body_ = allPassed
+              ? `${marker}\nAll exercises look complete. Marked as \`${doneLabel}\`.`
+              : `${marker}\nThe following exercises still need work:\n\n${failed
+                  .map((f) => `- [ ] ${f.name}`)
+                  .join("\n")}\n\nMarked as \`${unfinishedLabel}\`.`;
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.data.find(
+              (c) => c.user.type === "Bot" && c.body && c.body.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: body_,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body_,
+              });
+            }
