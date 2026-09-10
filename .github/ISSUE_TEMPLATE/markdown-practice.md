@@ -49,7 +49,7 @@ For each exercise, write your answer below the instructions, then preview the re
 
 ## 7. Table
 
-<!-- Make a table with 2 columns and 3 rows. -->
+<!-- Make a table with 2 columns and 3 rows total: a header row plus 2 rows of data. -->
 
 You can use [Tables Generator](https://www.tablesgenerator.com/markdown_tables#) to help build it.
 
