@@ -1,0 +1,33 @@
+project:
+  type: website
+  render:
+    - "index.qmd"
+    - "summaries/*.md"
+
+author:
+  - name: Charles Truong
+    url: https://charles.doffy.net/
+    email: ctruong@aup.edu
+
+website:
+  title: "MA/CS3050 Journal"
+  favicon: images/aup-logo.png
+
+  page-footer:
+    right: "This page is built with [Quarto](https://quarto.org/)."
+    left: "&copy; 2026 Charles Truong"
+
+  navbar:
+    logo: images/aup-logo.png
+    href: index.qmd
+    right:
+      - text: "Home"
+        href: index.qmd
+      - icon: github
+        href: https://github.com/deepcharles/macs3050-journal
+        aria-label: GitHub repository
+
+format:
+  html:
+    theme: [sandstone, brand, custom.scss]
+    toc: false

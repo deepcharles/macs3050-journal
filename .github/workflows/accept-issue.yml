@@ -24,8 +24,12 @@ jobs:
           mkdir -p summaries
           slug=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
           filename="summaries/${ISSUE_NUMBER}-${slug}.md"
+          title_yaml=$(printf '%s' "$ISSUE_TITLE" | sed 's/"/\\"/g')
           {
-            echo "# ${ISSUE_TITLE}"
+            echo "---"
+            echo "title: \"${title_yaml}\""
+            echo "date: $(date -u +%Y-%m-%d)"
+            echo "---"
             echo
             echo "$ISSUE_BODY"
           } > "$filename"

@@ -211,3 +211,7 @@ notebooks/.DS_Store
 notebooks/*/*_files/
 notebooks/charles/nx.html
 
+# Quarto website build artifacts
+/_site/
+/.quarto/
+

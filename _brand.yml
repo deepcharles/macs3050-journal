@@ -1,0 +1,31 @@
+meta:
+  name: MA/CS3050 Journal
+  instructor: Charles Truong
+  semester: Fall 2025
+
+logo:
+  images:
+    aup: images/aup-logo.png
+  small: aup
+  medium: aup
+  large: aup
+
+color:
+  palette:
+    jet: "#131516"
+    accent: "#107895"
+    accent2: "#9a2515"
+    lightblue: "#3c74ce"
+    darkblue: "#1b3d74"
+    orange: "#f7932f"
+    white: "#ffffff"
+    light-gray: "#f1f3f5"
+    mid-gray: "#75776d"
+    dark-gray: "#687178"
+  foreground: jet
+  background: white
+  primary: lightblue
+  secondary: darkblue
+  info: accent
+  warning: orange
+  danger: accent2

@@ -1,0 +1,13 @@
+---
+title: "MA/CS3050 Journal"
+listing:
+  contents: summaries
+  type: table
+  fields: [title, date]
+  sort: "date desc"
+  sort-ui: false
+  filter-ui: false
+page-layout: full
+---
+
+Article summaries submitted by students for MA/CS3050 (Fall 2025), from the [class journal repository](https://github.com/deepcharles/macs3050-journal).
