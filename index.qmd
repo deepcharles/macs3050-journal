@@ -10,4 +10,4 @@ listing:
 page-layout: full
 ---
 
-Article summaries submitted by students for MA/CS3050 (Fall 2025), from the [class journal repository](https://github.com/deepcharles/macs3050-journal).
+Article summaries submitted by students for MA/CS3050 (Fall 2025, Fall 2026), from the [class journal repository](https://github.com/deepcharles/macs3050-journal).

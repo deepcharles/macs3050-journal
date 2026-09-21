@@ -5,10 +5,6 @@ author: "longpn101-star"
 issue: https://github.com/deepcharles/macs3050-journal/issues/79
 ---
 
-### Students
-
-Long Nguyen
-
 #Question 1: Reference
 
 ```bibtex

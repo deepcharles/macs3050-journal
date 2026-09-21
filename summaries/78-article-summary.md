@@ -5,10 +5,6 @@ author: "MohamedTahaKhorchani"
 issue: https://github.com/deepcharles/macs3050-journal/issues/78
 ---
 
-### Students
-
-Mohamed
-
 ### Question 1: Reference
 
 ```bibtex

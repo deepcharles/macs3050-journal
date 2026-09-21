@@ -5,10 +5,6 @@ author: "london050"
 issue: https://github.com/deepcharles/macs3050-journal/issues/77
 ---
 
-### Students
-
-London Dunn
-
 ### Reference
 
 ```bibtex

@@ -5,10 +5,6 @@ author: "aleksandrebs"
 issue: https://github.com/deepcharles/macs3050-journal/issues/80
 ---
 
-### Students
-
-Aleksandre Bit-Suleiman
-
 ### Question 1: Reference
 
 ```bibtex

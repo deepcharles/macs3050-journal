@@ -5,10 +5,6 @@ author: "jonahortega"
 issue: https://github.com/deepcharles/macs3050-journal/issues/82
 ---
 
-### Students
-
-Jonah Ortega
-
 ### Question 1: Reference
 
 ```bibtex

@@ -5,10 +5,6 @@ author: "Ethan4325"
 issue: https://github.com/deepcharles/macs3050-journal/issues/81
 ---
 
-### Students
-
-Ethan
-
 ### Question 1: Reference
 
 ```bibtex

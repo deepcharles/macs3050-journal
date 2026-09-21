@@ -5,10 +5,6 @@ author: "mmftdgn"
 issue: https://github.com/deepcharles/macs3050-journal/issues/83
 ---
 
-### Students
-
-Fatou Diaby
-
 ### Question 1: Reference
 
 ```bibtex
